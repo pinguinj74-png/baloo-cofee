@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Baloo Coffee — Haz tu pedido</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #1a0505; min-height: 100vh; font-family: 'DM Sans', sans-serif; color: #fff; padding-bottom: 3rem; }
+    .hero { background: #7d1a1a; padding: 2.2rem 1.5rem 1.8rem; text-align: center; }
+    .spiral { width: 64px; height: 64px; margin: 0 auto 0.9rem; display: block; }
+    .hero h1 { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 900; color: #fff; line-height: 1.1; }
+    .hero p { color: rgba(255,255,255,0.65); margin-top: 0.35rem; font-size: 0.9rem; }
+    .badge { display: inline-block; background: #f5c842; color: #1a0505; font-size: 0.68rem; font-weight: 500; padding: 3px 11px; border-radius: 20px; margin-top: 0.6rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .body { max-width: 480px; margin: 0 auto; padding: 1.8rem 1.2rem 0; }
+    .slabel { font-size: 0.67rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.38); margin-bottom: 0.65rem; margin-top: 1.6rem; }
+    .slabel:first-child { margin-top: 0; }
+    .ifield { width: 100%; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 0.7rem 1rem; color: #fff; font-family: 'DM Sans', sans-serif; font-size: 0.92rem; margin-bottom: 0.65rem; outline: none; transition: border-color 0.2s; }
+    .ifield:focus { border-color: rgba(255,255,255,0.32); }
+    .ifield::placeholder { color: rgba(255,255,255,0.28); }
+    .fgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 0.65rem; }
+    .fcard { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 0.8rem; cursor: pointer; transition: all 0.16s; user-select: none; }
+    .fcard:hover { background: rgba(255,255,255,0.1); }
+    .fcard.sel { border-color: #f5c842; background: rgba(245,200,66,0.11); }
+    .fcard .fn { font-size: 0.86rem; font-weight: 500; color: #fff; }
+    .fcard.sel .fn { color: #f5c842; }
+    .fcard .fd { font-size: 0.71rem; color: rgba(255,255,255,0.42); margin-top: 2px; }
+    .fcard .fp { font-size: 0.78rem; color: #f5c842; margin-top: 5px; font-weight: 500; }
+    .qty-row { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 0.45rem 0.75rem; width: fit-content; margin-bottom: 0.65rem; }
+    .qbtn { width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.12); border: none; color: #fff; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+    .qbtn:hover { background: rgba(255,255,255,0.22); }
+    .qnum { font-size: 1rem; font-weight: 500; min-width: 22px; text-align: center; }
+    .trow { display: flex; gap: 9px; margin-bottom: 0.65rem; }
+    .tbtn { flex: 1; padding: 0.6rem; border-radius: 10px; background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.55); font-family: 'DM Sans', sans-serif; font-size: 0.88rem; cursor: pointer; transition: all 0.16s; }
+    .tbtn.act { border-color: #f5c842; color: #f5c842; background: rgba(245,200,66,0.1); }
+    .sumbox { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 0.9rem 1rem; margin-top: 1.4rem; font-size: 0.86rem; }
+    .srow { display: flex; justify-content: space-between; padding: 3px 0; color: rgba(255,255,255,0.6); }
+    .srow.tot { border-top: 1px solid rgba(255,255,255,0.1); margin-top: 7px; padding-top: 9px; color: #fff; font-weight: 500; font-size: 0.97rem; }
+    .srow.tot span:last-child { color: #f5c842; }
+    .chan-row { display: flex; gap: 9px; margin-bottom: 0.65rem; }
+    .cbtn { flex: 1; padding: 0.65rem 0.5rem; border-radius: 10px; background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.55); font-family: 'DM Sans', sans-serif; font-size: 0.85rem; cursor: pointer; transition: all 0.16s; display: flex; align-items: center; justify-content: center; gap: 7px; }
+    .cbtn.act { border-color: #f5c842; color: #f5c842; background: rgba(245,200,66,0.1); }
+    .send-btn { width: 100%; margin-top: 1.1rem; padding: 0.95rem; border: none; border-radius: 12px; color: #fff; font-family: 'DM Sans', sans-serif; font-size: 0.97rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 9px; transition: opacity 0.18s, transform 0.1s; }
+    .send-btn:active { transform: scale(0.98); }
+    .send-btn.wa { background: #25D366; } .send-btn.wa:hover { background: #1db954; }
+    .send-btn.ig { background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045); } .send-btn.ig:hover { opacity: 0.88; }
+    .note { text-align: center; font-size: 0.72rem; color: rgba(255,255,255,0.35); margin-top: 0.85rem; line-height: 1.55; }
+    .note.ig-note { color: #f5c842; background: rgba(245,200,66,0.08); border: 1px solid rgba(245,200,66,0.2); border-radius: 8px; padding: 0.5rem 0.75rem; font-size: 0.76rem; }
+    .err { background: rgba(220,50,50,0.13); border: 1px solid rgba(220,50,50,0.28); color: #f88; border-radius: 8px; padding: 0.55rem 0.85rem; font-size: 0.8rem; margin-top: 0.65rem; display: none; }
+    .err.show { display: block; }
+    .addr-wrap { position: relative; margin-bottom: 0.65rem; }
+    .addr-input-row { position: relative; }
+    .addr-icon { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 1rem; pointer-events: none; }
+    .addr-confirmed { display: none; align-items: center; gap: 8px; background: rgba(37,211,102,0.1); border: 1px solid rgba(37,211,102,0.3); border-radius: 10px; padding: 0.6rem 0.9rem; font-size: 0.82rem; color: #25D366; margin-top: 0.4rem; }
+    .addr-confirmed.show { display: flex; }
+    .suggestions { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: #2a0a0a; border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; z-index: 50; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.4); display: none; }
+    .suggestions.open { display: block; }
+    .suggestion-item { padding: 0.7rem 1rem; font-size: 0.85rem; color: rgba(255,255,255,0.8); cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: flex-start; gap: 8px; transition: background 0.12s; }
+    .suggestion-item:last-child { border-bottom: none; }
+    .suggestion-item:hover { background: rgba(255,255,255,0.07); }
+    .suggestion-item .s-main { font-weight: 500; color: #fff; font-size: 0.84rem; }
+    .suggestion-item .s-sub { font-size: 0.75rem; color: rgba(255,255,255,0.45); margin-top: 1px; }
+    .map-preview { margin-top: 0.5rem; border-radius: 10px; overflow: hidden; display: none; border: 1px solid rgba(255,255,255,0.1); }
+    .map-preview.show { display: block; }
+    .map-preview iframe { width: 100%; height: 160px; border: none; display: block; }
+    .confirm-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); align-items: flex-end; justify-content: center; z-index: 100; }
+    .confirm-overlay.show { display: flex; }
+    .confirm-sheet { background: #1e0606; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px 20px 0 0; padding: 1.5rem 1.4rem 2.2rem; width: 100%; max-width: 480px; animation: slideUp 0.28s ease; }
+    @keyframes slideUp { from { transform: translateY(60px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .confirm-icon { width: 48px; height: 48px; border-radius: 50%; background: rgba(245,200,66,0.15); border: 1px solid rgba(245,200,66,0.3); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.9rem; font-size: 1.5rem; }
+    .confirm-sheet h2 { font-family: 'Playfair Display', serif; font-size: 1.3rem; text-align: center; color: #fff; margin-bottom: 0.4rem; }
+    .confirm-sheet .sub { font-size: 0.83rem; color: rgba(255,255,255,0.5); text-align: center; margin-bottom: 1.1rem; line-height: 1.55; }
+    .ig-paste-hint { background: rgba(245,200,66,0.1); border: 1px solid rgba(245,200,66,0.25); border-radius: 10px; padding: 0.75rem 1rem; font-size: 0.82rem; color: #f5c842; margin-bottom: 1rem; line-height: 1.55; text-align: center; }
+    .ai-reply-box { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 0.9rem 1rem; font-size: 0.84rem; color: rgba(255,255,255,0.85); line-height: 1.65; margin-bottom: 1.1rem; min-height: 80px; }
+    .ai-typing { display: flex; gap: 4px; align-items: center; padding: 8px 0; }
+    .ai-dot { width: 7px; height: 7px; border-radius: 50%; background: #f5c842; animation: blink 1.2s infinite; }
+    .ai-dot:nth-child(2) { animation-delay: 0.2s; } .ai-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes blink { 0%,80%,100% { opacity: 0.2; } 40% { opacity: 1; } }
+    .close-btn { width: 100%; padding: 0.75rem; border-radius: 10px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.7); font-family: 'DM Sans', sans-serif; font-size: 0.9rem; cursor: pointer; transition: background 0.15s; }
+    .close-btn:hover { background: rgba(255,255,255,0.14); }
+  </style>
+</head>
+<body>
+
+<div class="hero">
+  <svg class="spiral" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="50" cy="50" r="48" fill="#fff" opacity="0.07"/>
+    <path d="M50,50 m0,-22 a22,22 0 1,1 -0.1,0 M50,50 m0,-14 a14,14 0 1,1 -0.1,0 M50,50 m0,-7 a7,7 0 1,1 -0.1,0" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/>
+  </svg>
+  <h1>Baloo Coffee</h1>
+  <p>Los rollos más deliciosos de Ica 🇵🇪</p>
+  <div class="badge">⭐ Sabores Deluxe — Haz tu pedido aquí</div>
+</div>
+
+<div class="body">
+  <div class="slabel">Tus datos</div>
+  <input class="ifield" id="name" type="text" placeholder="Tu nombre" />
+  <input class="ifield" id="phone" type="tel" placeholder="Tu número de teléfono (opcional)" />
+
+  <div class="slabel">Elige tu sabor</div>
+  <div class="fgrid">
+    <div class="fcard sel" data-flavor="Crema Clásica" data-price="18">
+      <div class="fn">Crema Clásica</div><div class="fd">Rollo suave, glaseado de vainilla</div><div class="fp">S/ 18</div>
+    </div>
+    <div class="fcard" data-flavor="Oreo Crunch" data-price="20">
+      <div class="fn">Oreo Crunch</div><div class="fd">Topping de cookies y crema</div><div class="fp">S/ 20</div>
+    </div>
+    <div class="fcard" data-flavor="Sueño de Pistacho" data-price="22">
+      <div class="fn">Sueño de Pistacho</div><div class="fd">Crema verde con nueces</div><div class="fp">S/ 22</div>
+    </div>
+    <div class="fcard" data-flavor="Choco Deluxe" data-price="20">
+      <div class="fn">Choco Deluxe</div><div class="fd">Hilo de chocolate oscuro</div><div class="fp">S/ 20</div>
+    </div>
+  </div>
+
+  <div class="slabel">Cantidad</div>
+  <div class="qty-row">
+    <button class="qbtn" id="qMinus">−</button>
+    <span class="qnum" id="qNum">1</span>
+    <button class="qbtn" id="qPlus">+</button>
+  </div>
+
+  <div class="slabel">¿Recojo o delivery?</div>
+  <div class="trow">
+    <button class="tbtn act" id="bPickup">🛍 Recojo en Ica</button>
+    <button class="tbtn" id="bDelivery">🛵 Delivery</button>
+  </div>
+
+  <div id="addrWrap" style="display:none;">
+    <div class="slabel" style="margin-top:1rem;">Tu dirección</div>
+    <div class="addr-wrap">
+      <div class="addr-input-row">
+        <input class="ifield" id="addrInput" type="text" placeholder="Escribe tu dirección en Ica..." autocomplete="off" style="padding-right:2.2rem; margin-bottom:0;" />
+        <span class="addr-icon">📍</span>
+      </div>
+      <div class="suggestions" id="suggestions"></div>
+      <div class="addr-confirmed" id="addrConfirmed">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#25D366"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+        <span id="addrConfirmedText">✓ Dirección verificada en el mapa</span>
+      </div>
+      <div class="map-preview" id="mapPreview">
+        <iframe id="mapFrame" src="" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+  <div class="slabel">Enviar pedido por</div>
+  <div class="chan-row">
+    <button class="cbtn act" id="chanWA">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.558 4.121 1.533 5.851L0 24l6.335-1.503C8.02 23.468 9.975 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818c-1.953 0-3.77-.53-5.323-1.453l-.382-.227-3.762.893.942-3.649-.249-.396C2.268 15.266 1.818 13.69 1.818 12 1.818 6.373 6.373 1.818 12 1.818S22.182 6.373 22.182 12 17.627 21.818 12 21.818z"/></svg>
+      WhatsApp
+    </button>
+    <button class="cbtn" id="chanIG">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+      Instagram DM
+    </button>
+  </div>
+
+  <div class="sumbox">
+    <div class="srow"><span>Sabor</span><span id="sFlavor">Crema Clásica</span></div>
+    <div class="srow"><span>Cantidad</span><span id="sQty">1 rollo</span></div>
+    <div class="srow"><span>Tipo</span><span id="sType">Recojo</span></div>
+    <div class="srow" id="sAddrRow" style="display:none;"><span>Dirección</span><span id="sAddr" style="max-width:60%;text-align:right;font-size:0.8rem;"></span></div>
+    <div class="srow tot"><span>Total</span><span id="sTotal">S/ 18</span></div>
+  </div>
+
+  <div class="err" id="errMsg">Por favor ingresa tu nombre antes de enviar tu pedido.</div>
+  <div class="err" id="errAddr">Por favor selecciona una dirección válida del listado.</div>
+
+  <button class="send-btn wa" id="sendBtn">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.558 4.121 1.533 5.851L0 24l6.335-1.503C8.02 23.468 9.975 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818c-1.953 0-3.77-.53-5.323-1.453l-.382-.227-3.762.893.942-3.649-.249-.396C2.268 15.266 1.818 13.69 1.818 12 1.818 6.373 6.373 1.818 12 1.818S22.182 6.373 22.182 12 17.627 21.818 12 21.818z"/></svg>
+    Enviar por WhatsApp
+  </button>
+  <p class="note" id="noteText">Abre WhatsApp con tu pedido completo ya escrito — ¡Baloo te confirma enseguida!</p>
+</div>
+
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-sheet">
+    <div class="confirm-icon">🌀</div>
+    <h2>¡Pedido enviado!</h2>
+    <p class="sub">Tu pedido fue enviado. Aquí está tu confirmación instantánea de Baloo Coffee:</p>
+    <div class="ig-paste-hint" id="igHint" style="display:none;">
+      📋 Tu pedido fue copiado al portapapeles. Cuando se abra Instagram, solo pégalo en el chat con <strong>Ctrl+V</strong> o manteniendo presionado y seleccionando "Pegar".
+    </div>
+    <div class="ai-reply-box">
+      <div class="ai-typing" id="aiTyping"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div>
+      <div id="aiText" style="display:none;"></div>
+    </div>
+    <button class="close-btn" id="closeConfirm">Cerrar</button>
+  </div>
+</div>
+
+<script>
+  const WA_NUMBER = "51947293501";
+  const IG_USER = "baloocoffee.pe";
+
+  let flavor = "Crema Clásica", price = 18, qty = 1, orderType = "Recojo", channel = "wa";
+  let confirmedAddress = "", addressConfirmed = false;
+  let debounceTimer = null;
+
+  document.querySelectorAll('.fcard').forEach(c => {
+    c.addEventListener('click', () => {
+      document.querySelectorAll('.fcard').forEach(x => x.classList.remove('sel'));
+      c.classList.add('sel');
+      flavor = c.dataset.flavor; price = parseInt(c.dataset.price);
+      updateSummary();
+    });
+  });
+
+  document.getElementById('qMinus').onclick = () => { if (qty > 1) { qty--; updateSummary(); } };
+  document.getElementById('qPlus').onclick = () => { if (qty < 20) { qty++; updateSummary(); } };
+
+  document.getElementById('bPickup').onclick = () => {
+    orderType = "Recojo";
+    document.getElementById('bPickup').classList.add('act');
+    document.getElementById('bDelivery').classList.remove('act');
+    document.getElementById('addrWrap').style.display = 'none';
+    document.getElementById('sAddrRow').style.display = 'none';
+    updateSummary();
+  };
+  document.getElementById('bDelivery').onclick = () => {
+    orderType = "Delivery";
+    document.getElementById('bDelivery').classList.add('act');
+    document.getElementById('bPickup').classList.remove('act');
+    document.getElementById('addrWrap').style.display = 'block';
+    updateSummary();
+  };
+
+  document.getElementById('chanWA').onclick = () => {
+    channel = "wa";
+    document.getElementById('chanWA').classList.add('act');
+    document.getElementById('chanIG').classList.remove('act');
+    document.getElementById('sendBtn').className = 'send-btn wa';
+    document.getElementById('sendBtn').innerHTML = waIcon() + ' Enviar por WhatsApp';
+    document.getElementById('noteText').textContent = "Abre WhatsApp con tu pedido completo ya escrito — ¡Baloo te confirma enseguida!";
+    document.getElementById('noteText').className = 'note';
+  };
+  document.getElementById('chanIG').onclick = () => {
+    channel = "ig";
+    document.getElementById('chanIG').classList.add('act');
+    document.getElementById('chanWA').classList.remove('act');
+    document.getElementById('sendBtn').className = 'send-btn ig';
+    document.getElementById('sendBtn').innerHTML = igIcon() + ' Enviar por Instagram DM';
+    document.getElementById('noteText').textContent = "Tu pedido se copiará automáticamente — solo pégalo en el chat de Instagram.";
+    document.getElementById('noteText').className = 'note ig-note';
+  };
+
+  const addrInput = document.getElementById('addrInput');
+  const suggestionsBox = document.getElementById('suggestions');
+
+  addrInput.addEventListener('input', () => {
+    addressConfirmed = false; confirmedAddress = "";
+    document.getElementById('addrConfirmed').classList.remove('show');
+    document.getElementById('mapPreview').classList.remove('show');
+    document.getElementById('sAddrRow').style.display = 'none';
+    clearTimeout(debounceTimer);
+    const val = addrInput.value.trim();
+    if (val.length < 3) { suggestionsBox.classList.remove('open'); return; }
+    debounceTimer = setTimeout(() => fetchSuggestions(val), 400);
+  });
+
+  async function fetchSuggestions(query) {
+    try {
+      const q = encodeURIComponent(query + ", Ica, Peru");
+      const url = `https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=5&countrycodes=pe&addressdetails=1`;
+      const res = await fetch(url, { headers: { 'Accept-Language': 'es' } });
+      const data = await res.json();
+      showSuggestions(data);
+    } catch(e) { suggestionsBox.classList.remove('open'); }
+  }
+
+  function showSuggestions(results) {
+    suggestionsBox.innerHTML = '';
+    if (!results.length) {
+      suggestionsBox.innerHTML = `<div class="suggestion-item"><div><div class="s-main" style="color:rgba(255,255,255,0.4);">No se encontraron resultados</div><div class="s-sub">Intenta con otro nombre de calle</div></div></div>`;
+      suggestionsBox.classList.add('open'); return;
+    }
+    results.forEach(r => {
+      const main = r.address.road || r.address.pedestrian || r.address.suburb || r.display_name.split(',')[0];
+      const div = document.createElement('div');
+      div.className = 'suggestion-item';
+      div.innerHTML = `<span>📍</span><div><div class="s-main">${main}</div><div class="s-sub" style="font-size:0.72rem;color:rgba(255,255,255,0.4);margin-top:2px;">${r.display_name}</div></div>`;
+      div.onclick = () => selectAddress(r, r.display_name);
+      suggestionsBox.appendChild(div);
+    });
+    suggestionsBox.classList.add('open');
+  }
+
+  function selectAddress(result, fullText) {
+    confirmedAddress = fullText; addressConfirmed = true;
+    addrInput.value = fullText;
+    suggestionsBox.classList.remove('open');
+    document.getElementById('addrConfirmed').classList.add('show');
+    const lat = parseFloat(result.lat), lng = parseFloat(result.lon);
+    document.getElementById('mapFrame').src = `https://www.openstreetmap.org/export/embed.html?bbox=${lng-0.005},${lat-0.005},${lng+0.005},${lat+0.005}&layer=mapnik&marker=${lat},${lng}`;
+    document.getElementById('mapPreview').classList.add('show');
+    document.getElementById('sAddr').textContent = fullText.length > 40 ? fullText.substring(0,40)+'…' : fullText;
+    document.getElementById('sAddrRow').style.display = 'flex';
+    updateSummary();
+  }
+
+  document.addEventListener('click', (e) => { if (!e.target.closest('.addr-wrap')) suggestionsBox.classList.remove('open'); });
+
+  function updateSummary() {
+    document.getElementById('qNum').textContent = qty;
+    document.getElementById('sFlavor').textContent = flavor;
+    document.getElementById('sQty').textContent = qty + (qty === 1 ? ' rollo' : ' rollos');
+    document.getElementById('sType').textContent = orderType;
+    document.getElementById('sTotal').textContent = 'S/ ' + (price * qty);
+  }
+
+  function buildMsg(name, phone, total) {
+    let msg = `🌀 *Nuevo Pedido — Baloo Coffee*\n\n👤 Nombre: ${name}`;
+    if (phone) msg += `\n📞 Teléfono: ${phone}`;
+    msg += `\n\n🧁 Sabor: ${flavor}\n🔢 Cantidad: ${qty} rollo${qty > 1 ? 's' : ''}\n📦 Tipo: ${orderType}`;
+    if (orderType === 'Delivery') msg += `\n📍 Dirección: ${confirmedAddress}`;
+    msg += `\n\n💰 Total: S/ ${total}\n\n_Enviado desde el formulario de Baloo Coffee_`;
+    return msg;
+  }
+
+  async function getAIConfirmation(name, total) {
+    const prompt = `Eres el asistente de Baloo Coffee, tienda de rollos de canela en Ica, Perú. Escribe una confirmación de pedido corta y cálida en español. Máximo 3 oraciones, 1 emoji. Detalles: Nombre: ${name}, Sabor: ${flavor}, Cantidad: ${qty}, Total: S/ ${total}, Tipo: ${orderType}${orderType==='Delivery'?', Dirección: '+confirmedAddress:''}. Solo el mensaje.`;
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 150, messages: [{ role: "user", content: prompt }] })
+    });
+    const data = await res.json();
+    return data.content[0].text;
+  }
+
+  document.getElementById('sendBtn').onclick = async () => {
+    const name = document.getElementById('name').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    document.getElementById('errMsg').classList.remove('show');
+    document.getElementById('errAddr').classList.remove('show');
+    if (!name) { document.getElementById('errMsg').classList.add('show'); return; }
+    if (orderType === 'Delivery' && !addressConfirmed) { document.getElementById('errAddr').classList.add('show'); return; }
+
+    const total = price * qty;
+    const msg = buildMsg(name, phone, total);
+
+    if (channel === 'wa') {
+      window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+      document.getElementById('igHint').style.display = 'none';
+    } else {
+      try { await navigator.clipboard.writeText(msg); } catch(e) {}
+      window.open(`https://www.instagram.com/direct/t/${IG_USER}`, '_blank');
+      document.getElementById('igHint').style.display = 'block';
+    }
+
+    const overlay = document.getElementById('confirmOverlay');
+    const aiTyping = document.getElementById('aiTyping');
+    const aiText = document.getElementById('aiText');
+    overlay.classList.add('show');
+    aiTyping.style.display = 'flex'; aiText.style.display = 'none'; aiText.textContent = '';
+
+    try {
+      const reply = await getAIConfirmation(name, total);
+      aiTyping.style.display = 'none'; aiText.style.display = 'block';
+      let i = 0;
+      const interval = setInterval(() => { aiText.textContent += reply[i]; i++; if (i >= reply.length) clearInterval(interval); }, 18);
+    } catch(e) {
+      aiTyping.style.display = 'none'; aiText.style.display = 'block';
+      aiText.textContent = `¡Gracias ${name}! Tu pedido de ${qty} rollo${qty>1?'s':''} de ${flavor} fue recibido. Te confirmamos en breve. 🌀`;
+    }
+  };
+
+  document.getElementById('closeConfirm').onclick = () => document.getElementById('confirmOverlay').classList.remove('show');
+
+  function waIcon() { return `<svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.558 4.121 1.533 5.851L0 24l6.335-1.503C8.02 23.468 9.975 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818c-1.953 0-3.77-.53-5.323-1.453l-.382-.227-3.762.893.942-3.649-.249-.396C2.268 15.266 1.818 13.69 1.818 12 1.818 6.373 6.373 1.818 12 1.818S22.182 6.373 22.182 12 17.627 21.818 12 21.818z"/></svg>`; }
+  function igIcon() { return `<svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>`; }
+
+  updateSummary();
+</script>
+</body>
+</html>
